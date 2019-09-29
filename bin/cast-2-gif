@@ -1,0 +1,28 @@
+#!/bin/sh
+
+# Convert asciinema cast to gif with
+# https://github.com/asciinema/asciicast2gif
+
+set -e
+
+input="$1"
+output="$2"
+
+if [ -z "$input" -o -z "$output" ]; then
+    echo "Usage: $0 <input> <output> [arg ...]"
+    exit 2
+fi
+
+shift
+shift
+
+tmp="$(mktemp -d)"
+cp "$input" "$tmp/input"
+
+docker pull asciinema/asciicast2gif
+docker run --rm -v "$tmp:/data" asciinema/asciicast2gif \
+    "$@" \
+    /data/input \
+    /data/output
+
+cp "$tmp/output" "$output"

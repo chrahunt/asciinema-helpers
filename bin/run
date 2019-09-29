@@ -1,0 +1,15 @@
+#!/bin/sh
+output="$1"
+if [ -z "$output" ]; then
+    output="$(mktemp -d)/output.cast"
+fi
+
+venv_dir="$(mktemp -d)"
+python -m venv "$venv_dir"
+"$venv_dir/bin/python" -m pip install asciinema
+asciinema="$venv_dir/bin/asciinema"
+
+cd "$(mktemp -d)"
+
+export PS1='\[\e[0;33m\]$\[\e[0m\] '
+"$asciinema" rec --command "$SHELL --norc" --idle-time-limit 1 "$output"

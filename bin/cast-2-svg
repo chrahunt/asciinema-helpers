@@ -1,0 +1,24 @@
+#!/bin/sh
+
+# Convert asciinema cast to svg with
+# https://github.com/nbedos/termtosvg
+
+set -e
+
+input="$1"
+output="$2"
+
+if [ -z "$input" -o -z "$output" ]; then
+    echo "Usage: $0 <input> <output> [arg ...]"
+    exit 2
+fi
+
+shift
+shift
+
+venv_dir="$(mktemp -d)"
+python -m venv "$venv_dir"
+"$venv_dir/bin/python" -m pip install termtosvg
+termtosvg="$venv_dir/bin/termtosvg"
+
+"$termtosvg" render "$input" "$output" "$@"
